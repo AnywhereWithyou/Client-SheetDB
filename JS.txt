@@ -1,0 +1,162 @@
+<script>
+  function addo(v) {
+    if(document.getElementById('hida').value==""
+      ||document.getElementById('firstname').value==""
+      ||document.getElementById('lastname').value==""
+      ||document.getElementById('mob').value==""
+      ||document.getElementById('email').value=="") {
+      document.getElementById('info').innerHTML ="Something is wrong!";
+      myin();
+    }
+    else {
+      document.getElementById('info').innerHTML ="Submitting...";
+      document.getElementById('pp1').style.display='none';
+      document.getElementById('info').className = "show";
+      google.script.run.withFailureHandler(failure)
+                          .withSuccessHandler(inf1)
+                          .addclient(v);
+    }
+  };
+
+  function inf1(x) {
+    document.getElementById('info').innerHTML = x;
+    document.getElementById('lab').reset();
+    tg();
+    myin();
+  }
+
+  function failure(x) {
+    document.getElementById('info').innerHTML = x;
+    document.getElementById('lab').reset();
+    tg();
+    myin();
+  }
+
+  function myin() {
+    var x = document.getElementById("info");
+    x.className = "show";
+    setTimeout(function() {
+      x.className = x.className.replace("show", "");
+    },2000);
+  }
+</script>
+
+<script>
+  function deleteRow(element) {
+    var tableRow = element.parentNode.parentNode; // Get the table row
+    var clientID = tableRow.querySelector('.clientID').textContent;
+    var rowIndex = tableRow.rowIndex; // Get the index of the row
+    google.script.run.delclient(clientID);
+    tableRow.remove(); 
+    document.getElementById('info').innerHTML = clientID;
+    myin();
+  }
+</script>
+
+<script>
+  function editRow(element) {
+
+    var tableRow = element.parentNode.parentNode; // Get the table row
+    var clientID = tableRow.querySelector('.clientID').textContent;
+    var clientFirst = tableRow.querySelector('.firstname').textContent;
+    var clientLast = tableRow.querySelector('.lastname').textContent;
+    var clientPhone = tableRow.querySelector('.mob').textContent;
+    var clientEmail = tableRow.querySelector('.email').textContent;
+
+    var clientFulladdressValue = "";
+    var clientFulladdressIndex = -1;
+
+    var selector = tableRow.querySelector('#contact_add');
+    if (selector) {
+      clientFulladdressValue = selector.value;
+      clientFulladdressIndex = selector.selectedIndex;
+      var values = clientFulladdressValue.split(", ");
+      document.getElementById("fulladdress").value = clientFulladdressValue
+      document.getElementById("address1").value = values[0] || "";
+      document.getElementById("address2").value = (values.length === 5) ? values[1] : "";
+      document.getElementById("city").value = (values.length === 5) ? values[2] : values[1];
+      document.getElementById("state").value = (values.length === 5) ? values[3] : values[2];
+      document.getElementById("postcode").value = (values.length === 5) ? values[4] : values[3];
+
+    }
+    document.getElementById("hida").value = clientID; 
+    document.getElementById("firstname").value = clientFirst; 
+    document.getElementById("lastname").value = clientLast; 
+    document.getElementById("mob").value = clientPhone; 
+    document.getElementById("email").value = clientEmail; 
+
+    document.getElementById('pp1').style.display='block'; 
+  }
+</script>
+    
+<script>
+  function tg() {
+    document.getElementById('irefresh').classList.add('fa-spin');
+    google.script.run.withSuccessHandler(showData).tget();
+  };
+
+  function showData(data) {
+    document.getElementById('itable').innerHTML =data;
+    document.getElementById('irefresh').classList.remove('fa-spin');
+    var table = document.getElementById("tabl");
+    var pids = '<option value=""hidden>SELECT HOLDER ID</option>';
+    for (var i = 1; i < table.rows.length; i++) {
+    pids += "<option>" +table.rows[i].cells[1].innerText+ "</option>";}
+    document.getElementById("sel1").innerHTML = pids;
+    document.getElementById("sel2").innerHTML = pids;
+  } 
+</script>
+<script>
+  function resetAddress() {
+    document.getElementById("address1").value = "";
+    document.getElementById("address2").value = "";
+    document.getElementById("city").value = "";
+    document.getElementById("state").value = "";
+    document.getElementById("postcode").value = "";
+}
+</script>
+
+<script>
+  function searchTable() {
+    var input, filter, found, table, tr, td, i, j;
+    input = document.getElementById("sinput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("tabl");
+    tr = table.getElementsByTagName("tr");
+    for (i = 1; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td");
+        for (j = 0; j < td.length; j++) {
+            if (td[j].innerHTML.toUpperCase().indexOf(filter) > -1) {
+                found = true;
+            }
+        }
+        if (found) {
+            tr[i].style.display = "";
+            found = false;
+        } 
+        else {
+            tr[i].style.display = "none";
+        }
+    }
+}
+</script>
+
+<script>
+  function getUnixTime() {
+    var date = new Date();
+    var unixTimestamp = Math.floor(date.getTime() / 1000);
+
+    return unixTimestamp.toString();
+  }
+
+// Example usage
+var unixTime = getUnixTime();
+  function adc() {
+    document.getElementById('pp1').style.display='block';  
+    document.getElementById("hida").value = getUnixTime();
+  }
+  function lowerCase(elem){
+    var temp = elem.value;
+    elem.value = temp.toLowerCase();
+  }; 
+</script>

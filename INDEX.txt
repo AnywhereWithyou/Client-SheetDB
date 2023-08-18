@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-4B7DMFBL9Q"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-4B7DMFBL9Q');
+    </script>
+    <base target="_top">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+      <?!= include('js'); ?>
+      <?!= include('css'); ?>
+  </head>
+  <body style="margin:10px;" onload="tg(this);">
+    <?!= include('addclient'); ?>
+    <div class="w3-padding w3-large w3-light-grey w3-responsive">
+      <i id="irefresh" class="fa fa-refresh fa-0 w3-padding"onclick="tg(this);"></i>
+      <i class="fa fa-user-plus w3-padding w3-teal w3-hover-gray"onclick="adc(this);"> ADD CLIENTS</i>
+      <div id="info"style="margin-left:10px;"class="icon icon-success"></div>
+      <div class="w3-right">
+        <input type="search"id="sinput"onkeyup="searchTable()"placeholder="Type to seach..."><i class="fa fa-search w3-green w3-padding"></i>
+      </div>
+    </div>
+    <div id="itable"></div>                                       
+  </body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+  </head>
+  <body>
+    <div>
+      <h1>Sidebar Content</h1>
+      <p id="content">Loading...</p>
+      <button id="exportSheetButton">Create/Update Google Sheet</button>
+      <input type="text" id="sheetName" placeholder="Enter Google Sheet Name">
+      <button id="exportFileButton">Create Local Text File</button>
+      <br>
+      <input type="text" id="fileName" placeholder="Enter File Name">
+    </div>
+
+    <script>
+      function updateContent() {
+        google.script.run.withSuccessHandler(function(data) {
+          document.getElementById('content').innerText = data;
+        }).getSidebarContent();
+      }
+
+      function createOrUpdateSheet() {
+        var sheetName = document.getElementById('sheetName').value;
+        google.script.run.withSuccessHandler(function(sheetUrl) {
+          var link = document.createElement('a');
+          link.href = sheetUrl;
+          link.target = '_blank';
+          link.click();
+        }).createOrUpdateGoogleSheet(sheetName, document.getElementById('content').innerText);
+      }
+
+      function createTextFile() {
+        var fileName = document.getElementById('fileName').value + '.txt';
+        var content = document.getElementById('content').innerText;
+        google.script.run.withSuccessHandler(function(result) {
+          alert(result);
+        }).createLocalTextFile(fileName, content);
+      }
+
+      document.getElementById('exportSheetButton').addEventListener('click', createOrUpdateSheet);
+      document.getElementById('exportFileButton').addEventListener('click', createTextFile);
+      setInterval(updateCharacterCount, 100);
+      // Initial update
+      updateContent();
+    </script>
+  </body>
+</html>

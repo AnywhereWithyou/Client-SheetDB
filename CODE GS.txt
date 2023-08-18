@@ -1,0 +1,131 @@
+function doGet(e){
+  return HtmlService.createTemplateFromFile("index")
+                     .evaluate()
+                     .setTitle("CRUD System");
+}
+
+function include(filename) {
+  return HtmlService.createHtmlOutputFromFile(filename).getContent();
+}
+
+var wss = SpreadsheetApp.openById("1MqBjLj9tUdqrwC5csv0d5q5piqHbUIh2DbqZJJtXmpw")
+var sn = wss.getSheetByName("Clients");
+var z = (num, places) => String(num).padStart(places, '0');
+
+function tget(){
+  var tv = sn.getDataRange().getValues();
+  var val ='<table class="w3-table-all w3-small w3-centered" id="tabl"><tr class="w3-red"><th>Date</th><th>ID</th><th>First Name</th><th>Last Name</th><th>Phone Number</th><th>Email Address</th><th>Contact</th><th>Actions</th></tr>';
+  for(var i=1;i<tv.length;i++) {
+    var k = i + 1;
+    var cell = sn.getRange('G'+k+'');
+    var rule = cell.getDataValidation();
+    if (rule != null) {
+      var criteria = rule.getCriteriaType();
+      var args = rule.getCriteriaValues();
+      var dropdownHTML = '<select class="w3-medium" id="contact_add">';
+      for (var j = 0; j < args[0].length; j++) {
+        dropdownHTML += '<option>' + args[0][j] + '</option>';
+      }
+      dropdownHTML += '</select>';
+      Logger.log('The data validation rule is %s %s', criteria, args);
+    } else {
+      dropdownHTML = tv[i][6];
+      Logger.log('The cell does not have a data validation rule.')
+    }
+    val+='<tr><td>'+tv[i][0]+'</td><td class="clientID">'+tv[i][1]+'</td><td class="firstname">'+tv[i][2]+'</td><td class="lastname">'+tv[i][3]+'</td><td class="mob">'+tv[i][4]+'</td><td class="email">'+tv[i][5]+'</td><td class="address">'+dropdownHTML+'</td><td class="w3-center"><button class="w3-button w3-round-large w3-smalls w3-green" onclick="editRow(this);">Edit</button>&nbsp;&nbsp;<button class="w3-button w3-round-large w3-smalls w3-red" onclick="deleteRow(this)">Delete</button></td></tr>';
+  }
+  return val+'</table>';
+}
+
+function delclient(clientID) {
+  var data = sn.getDataRange().getValues();
+  var rowToDelete = 0;
+  var flag = 0;
+
+  for (var i = 1; i < data.length; i++) {
+    if (data[i][1] == clientID) { // Assuming the clientID is in the second column (B column)
+      rowToDelete = i+1; // Rows in Google Sheets are 1-indexed, and we add 1 to account for the header row
+      flag = 1;
+    }
+  }
+  if(flag==1) {
+    flag = 0;
+    sn.deleteRow(rowToDelete);
+  }
+}
+
+function addclient(v) {
+  var l = sn.getLastRow()+1;
+  var flag  =  1 ;
+  var dropdownValues = [];
+  var fulladdress = "";
+
+  for(var i = 1;i <= l;i++) {
+    if(sn.getRange(i, 2).getValue() == v.hid){// checking if condidate already exist.
+      flag = 0;   
+      fulladdress = v.address1 +", "+ v.address2 +", "+  v.city +", "+  v.state +", "+ (v.postcode).toString();
+      fulladdress = fulladdress.replace(/, , /g, ", ");
+      fulladdressOld = v.fulladdress;
+      var cell = sn.getRange(i, 7, 1, 1); 
+      dataValidation = cell.getDataValidation();
+      if (dataValidation != null && dataValidation.getCriteriaType() === SpreadsheetApp.DataValidationCriteria.VALUE_IN_LIST) {
+        dropdownValues = dataValidation.getCriteriaValues()[0];
+        Logger.log(dropdownValues);
+      }
+      var fullAddressExists = dropdownValues.includes(fulladdress);
+      if (fullAddressExists) {
+          var data = "Contact address is existing";
+      }
+      else {
+        if( (v.address1 != "") && (v.city != "") && (v.state != "") && ((v.postcode).toString() != "") ) {
+          dropdownValues.push(fulladdress);
+          var data = "Contact address was successfully added.";
+        }
+        if( (v.address1 == "") && (v.city == "") && (v.state == "") && ((v.postcode).toString() == "") ) {
+          dropdownValues.splice(dropdownValues.indexOf(fulladdressOld), 1);
+          var data = "Contact address was successfully deleted.";
+        }
+      } 
+      var dt = Utilities.formatDate(new Date(),Intl.DateTimeFormat().resolvedOptions().timeZone, 'yyyy-MM-dd HH:mm:ss');
+      sn.getRange(i, 1).setValue( dt ); 
+      sn.getRange(i, 3).setValue( v.firstname ); 
+      sn.getRange(i, 4).setValue( v.lastname ); 
+      sn.getRange(i, 5).setValue( v.mob ); 
+      sn.getRange(i, 6).setValue( v.email ); 
+      var rule = SpreadsheetApp.newDataValidation()
+        .requireValueInList(dropdownValues)
+        .setAllowInvalid(false)
+        .build();
+      cell.clearDataValidations();
+      cell.setValue(dropdownValues[0]);
+      cell.setDataValidation(rule);
+      return data;
+    }
+  }
+  if(flag==1) {
+    var dt = Utilities.formatDate(new Date(),Intl.DateTimeFormat().resolvedOptions().timeZone, 'yyyy-MM-dd HH:mm:ss');
+    sn.appendRow([dt,v.hid,v.firstname,v.lastname,v.mob,v.email]);
+    sn.getRange(l,1).setNumberFormat('@STRING@');
+    if( (v.address1 != "") && (v.city != "") && (v.state != "") && ((v.postcode).toString() != "") ) {
+      fulladdress = v.address1 +", "+ v.address2 +", "+  v.city +", "+  v.state +", "+ (v.postcode).toString();
+      fulladdress = fulladdress.replace(/, , /g, ", ");
+
+      var cell = sn.getRange(l, 7, 1, 1); 
+      dataValidation = cell.getDataValidation();
+      if (dataValidation != null && dataValidation.getCriteriaType() === SpreadsheetApp.DataValidationCriteria.VALUE_IN_LIST) {
+        dropdownValues = dataValidation.getCriteriaValues()[0];
+        Logger.log(dropdownValues);
+      }
+      dropdownValues.push(fulladdress);
+      var rule = SpreadsheetApp.newDataValidation()
+        .requireValueInList(dropdownValues)
+        .setAllowInvalid(false)
+        .build();
+      cell.clearDataValidations();
+      cell.setValue(dropdownValues[0]);
+      cell.setDataValidation(rule);
+    }
+    var data = 'Client was successfully added.';
+    return data;
+  }
+};

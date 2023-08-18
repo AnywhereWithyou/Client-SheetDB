@@ -1,0 +1,78 @@
+<div class="w3-modal"id="pp1">
+  <div class="w3-modal-content" style="width:800px">
+      <form id="lab"  action="abc.jsp" onsubmit="event.preventDefault();addo(this);">
+        <div class="w3-row-padding w3-light-grey">
+          <div class="w3-col s6">
+            <fieldset class="w3-border-teal">
+              <legend>Client Detail:</legend>
+              <div class="w3-row-padding">
+                <div class="w3-col s12">
+                  <lavel>Client ID:</lavel>
+                  <input type="text"name="hid"id="hida"class="w3-input w3-border" required readonly="readonly">
+                </div>
+                <div class="w3-col s12">
+                  <lavel>First name:</lavel>
+                  <input type="text"name="firstname"id="firstname"class="w3-input w3-border" required>
+                </div>
+                <div class="w3-col s12">
+                  <lavel>Last  name:</lavel>
+                  <input type="text"name="lastname"id="lastname"class="w3-input w3-border" required>
+                </div>
+                <div class="w3-col s12">
+                  <lavel>Mobile Number:</lavel>
+                  <input type="number"name="mob"id="mob"class="w3-input w3-border" required>
+                </div>
+                <div class="w3-col s12">
+                  <lavel>Email ID:</lavel>
+                  <input type="email"name="email"id="email"class="w3-input w3-border" required>
+                </div>
+                <div class="w3-col s12" style="margin-top:24px; display: flex; justify-content: center;">
+                  <input type="submit" class="w3-button w3-green w3-col s4"value="Submit" >
+                  &nbsp;&nbsp;&nbsp;&nbsp;
+                  <button onclick="document.getElementById('pp1').style.display='none'"class="w3-button w3-red w3-col s4 w3-padding"style="margin-left:10px;">Close</button>
+                </div>
+              </div>
+            </fieldset> 
+          </div>
+          <div class="w3-col s6">
+            <fieldset class="w3-border-teal">
+              <legend>Contact Detail:</legend>
+              <div class="w3-row-padding">
+                <div class="w3-col s12">
+                  <div style="display:flex;flex-direction:row; justify-content: space-between;">
+                    <lavel>Full Address:</lavel>
+                    <span style="color: red;cursor: pointer" onclick="resetAddress();"><u><b>Delete</b></u></span>
+                  </div>
+                  <input type="text"name="fulladdress"id="fulladdress"class="w3-input w3-border" readonly="readonly">
+                </div>
+
+                <div class="w3-col s12">
+                  <lavel>Address1:</lavel>
+                  <input type="text"name="address1"id="address1"class="w3-input w3-border">
+                </div>
+
+                <div class="w3-col s12">
+                  <lavel>Address2:</lavel>
+                  <input type="text"name="address2"id="address2"class="w3-input w3-border">
+                </div>
+
+                <div class="w3-col s12">
+                  <lavel>City:</lavel>
+                  <input type="text"name="city"id="city"class="w3-input w3-border">
+                </div>
+
+                <div class="w3-col s12">
+                  <lavel>State:</lavel>
+                  <input type="text"name="state"id="state"class="w3-input w3-border">
+                </div>
+                <div class="w3-col s12">
+                  <lavel>Post/Zip:</lavel>
+                  <input type="number"name="postcode"id="postcode"class="w3-input w3-border">
+                </div>
+              </div>
+            </fieldset> 
+          </div>
+        </div>
+      </form>
+  </div>
+</div>
